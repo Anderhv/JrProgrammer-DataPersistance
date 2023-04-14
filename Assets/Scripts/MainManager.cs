@@ -13,6 +13,7 @@ public class MainManager : MonoBehaviour
 
     public Text ScoreText;
     public Text PlayerNameText;
+    public Text BestScoreText;
     public GameObject GameOverText;
 
     private bool m_Started = false;
@@ -22,6 +23,9 @@ public class MainManager : MonoBehaviour
 
     void Awake()
     {
+        PlayerNameText.text = PersistantDataManager.Instance.PlayerName;
+        var highScore = PersistantDataManager.Instance.HighScore;
+        BestScoreText.text = $"Best Score: {highScore.Name}: {highScore.Score.ToString()}";
         if (Instance != null)
         {
             Destroy(gameObject);
@@ -29,7 +33,6 @@ public class MainManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(this.gameObject);
-        PlayerNameText.text = PersistantDataManager.Instance.PlayerName;
     }
 
     // Start is called before the first frame update
@@ -83,6 +86,10 @@ public class MainManager : MonoBehaviour
 
     public void GameOver()
     {
+        if (m_Points > PersistantDataManager.Instance.HighScore.Score)
+        {
+            PersistantDataManager.Instance.SaveHighScore(m_Points);
+        }
         m_GameOver = true;
         GameOverText.SetActive(true);
     }
